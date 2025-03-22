@@ -4,6 +4,8 @@ import random
 DROPS_COUNT = 400
 REDRAW_DELAY_MS = 50
 CHARS = "アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトホモヨョロヲゴゾドボポヴッンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+FONT = ('Courier', 12)
+RANDOM_TAIL = True
 
 class Point:
     def __init__(self,x, y, color_g, color_rb, step, length):
@@ -59,9 +61,13 @@ class MatrixEffect:
         drop : Point
         for drop in self.drops:
             symbol = random.choice(self.chars)
-            text_obj = self.canvas.create_text(drop.x, drop.y, text=symbol, fill=drop.color, font=('Courier', 12))
+            text_obj = self.canvas.create_text(drop.x, drop.y, text=symbol, fill=drop.color, font=FONT)
 
             self.drops_update[drop].append(text_obj)
+
+            if len(self.drops_update[drop]) > drop.length:
+                val = self.drops_update[drop].pop(0)
+                self.canvas.delete(val)
 
             for i, text_id in enumerate(self.drops_update[drop]):
                 color_g = drop.color_g
@@ -73,10 +79,8 @@ class MatrixEffect:
                 else:
                     color_rb = max(color_rb - delta, 20)
                 self.canvas.itemconfig(text_id, fill=color(color_g, color_rb))
-
-            if len(self.drops_update[drop]) > drop.length:
-                val = self.drops_update[drop].pop(0)
-                self.canvas.delete(val)
+                if RANDOM_TAIL:
+                    self.canvas.itemconfig(text_id, text=random.choice(self.chars))
 
             if drop.y > self.height:
                 drop.x = random.randint(0, self.width)
