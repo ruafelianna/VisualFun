@@ -38,11 +38,17 @@ class MatrixEffect:
         self.delta_time = REDRAW_DELAY_MS
         self.drops = []
         self.drops_update : dict[Point, list[int]] = {}
-        self.width = self.root.winfo_screenwidth()
-        self.height = self.root.winfo_screenheight()
 
         self.create_drops()
         self.animate()
+
+    @property   
+    def width(self):
+        return self.root.winfo_screenwidth()
+
+    @property   
+    def height(self):
+        return self.root.winfo_screenheight()
 
     def create_drops(self):
         for _ in range(DROPS_COUNT):
